@@ -289,6 +289,23 @@ abstract class ClassSourceBuilder extends JavaSourceBuilder {
         decrAlign();
         indent();
         append("}\n");
+        // Generate field for easier access
+        if (!nullCheck && constant.type.isPrimitive()) {
+            indent();
+            final String finality;
+            if (mods != null && !mods.isBlank()) {
+                if (mods.contains("final")) {
+                    finality = "";
+                } else {
+                    finality = " final";
+                }
+            } else {
+                finality = "final";
+            }
+            append("/** " + constant.accessExpression() + " */\n");
+            indent();
+            append(mods + finality + " " + constant.type().getSimpleName() + " " + getterName + " = " + getterName + "();\n");
+        }
         decrAlign();
     }
 
